@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toy Section</title>
+    <link rel="icon" type="image/png" href="./images/hh.png">
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto:wght@300;400;700&display=swap');
+
+        body {
+            background-image: url(./images/toy.png); background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            font-family: 'Pacifico', cursive;
+            padding: 20px;
+        }
+
+        /* Heading Styles */
+        h1 {
+            font-size: 32px;
+            color: white;
+            text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.7);
+        }
+
+        /* Modern Glassy Buttons */
+        button {
+            margin-bottom: 20px;
+            padding: 12px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            cursor: pointer;
+            font-family: 'Pacifico', cursive;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(255, 255, 255, 0.3);
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Main Content Box (Glassmorphism) */
+        .container {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 90%;
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0px 8px 16px rgba(255, 255, 255, 0.3);
+            flex-direction: row;
+        }
+
+        /* Webcam Container */
+        #webcam-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* Prediction Labels */
+        #label-container {
+            flex: 1;
+            text-align: left;
+        }
+
+        /* Prediction Styling */
+        .prediction-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-family: 'Roboto', sans-serif;
+            color: white;
+            text-shadow: 1px 1px 6px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Modern Progress Bar */
+        .progress-bar {
+            width: 120px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #6d1e89;
+            width: 0;
+            transition: width 0.3s ease-in-out;
+        }
+
+        /* "See More" Section */
+        #see-more {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .see-more-button {
+            margin-top: 15px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Visual Recognition System</h1>
+    <button onclick="init()">Start</button>
+    <div class="container" id="main-container">
+        <div id="webcam-container"></div>
+        <div id="label-container"></div>
+    </div>
+
+    <button class="see-more-button" onclick="location.href='home.html'">See More</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script type="text/javascript">
+        const URL = "./my_model/";
+        let model, webcam, labelContainer, maxPredictions;
+
+        async function init() {
+            if (webcam) return;
+            
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            const flip = true;
+            webcam = new tmImage.Webcam(200, 200, flip);
+            await webcam.setup();
+            await webcam.play();
+            window.requestAnimationFrame(loop);
+
+            document.getElementById("webcam-container").appendChild(webcam.canvas);
+
+            labelContainer = document.getElementById("label-container");
+            labelContainer.innerHTML = model.getClassLabels().map((label, i) => 
+                `<div class='prediction-container' id='prediction-${i}'>
+                    <span>${label}: <b>0%</b></span>
+                    <div class='progress-bar'>
+                        <div class='progress-fill'></div>
+                    </div>
+                </div>`
+            ).join('');
+            
+            document.getElementById("main-container").style.display = "flex";
+        }
+
+        async function loop() {
+            webcam.update();
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            [...labelContainer.children].forEach((container, i) => {
+                let prob = Math.round(prediction[i].probability * 100);
+                container.querySelector("span b").innerText = `${prob}%`;
+                container.querySelector(".progress-fill").style.width = `${prob}%`;
+            });
+        }
+    </script>
+</body>
+</html>

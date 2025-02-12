@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="icon" type="image/png" href="./images/hh.png">
+    <link href="https://cdn.jsdelivr.net/npm/ionicons@5.5.0/dist/css/ionicons.min.css" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+</head>
+    <style>
+    /* Reset default margin & padding for all elements */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Make the page take up the full height of the viewport */
+    body {
+        height: 100vh;
+        display: grid;
+        place-items: center;
+        overflow: hidden; /* Prevents scrolling if content overflows */
+    }
+
+    /* Main container holding the slider */
+    main {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.3); /* Adds a subtle shadow */
+    }
+
+    /* Styling for each sliding item (cards in the carousel) */
+    .item {
+        width: 200px; /* Default width */
+        height: 300px; /* Default height */
+        list-style-type: none;
+        position: absolute;
+        top: 50%; /* Align items vertically */
+        transform: translateY(-50%); /* Center items */
+        z-index: 1; /* Ensures proper stacking order */
+        background-position: center;
+        background-size: cover;
+        border-radius: 20px;
+        box-shadow: 0 20px 30px rgba(255,255,255,0.3) inset; /* Inner shadow */
+        transition: transform 0.1s, left 0.75s, top 0.75s, width 0.75s, height 0.75s;
+    }
+
+    /* --- Positioning Items in the Slider --- */
+
+    /* First and second items take up the full screen */
+    .item:nth-child(1), .item:nth-child(2) {
+        left: 0; /* Fully visible */
+        top: 0;
+        width: 100%;
+        height: 100%;
+        transform: none; /* No transformations needed */
+        border-radius: 0;
+        box-shadow: none;
+        opacity: 1; /* Fully visible */
+    }
+
+    /* Third item moves slightly right */
+    .item:nth-child(3) {
+        left: 50%; /* Positioned midway */
+    }
+
+    /* Fourth item moves further right */
+    .item:nth-child(4) {
+        left: calc(50% + 220px); /* Positioned further out */
+    }
+
+    /* Fifth item moves even further right */
+    .item:nth-child(5) {
+        left: calc(50% + 440px); /* Positioned further away */
+    }
+
+    /* Sixth item is positioned outside of the visible area */
+    .item:nth-child(6) {
+        left: calc(50% + 660px); /* Moves far out of view */
+        opacity: 0; /* Hidden initially */
+    }
+
+    /* --- Styling Content Inside Each Item --- */
+
+    /* Make the content box responsive */
+    .content {
+        width: min(30vw, 400px); /* Responsive width */
+        position: absolute;
+        top: 50%;
+        left: 3rem; /* Offset from left */
+        transform: translateY(-50%); /* Center vertically */
+        font: 400 0.85rem helvetica, sans-serif;
+        color: white;
+        text-shadow: 0 3px 8px rgba(0,0,0,0.5);
+        opacity: 0;
+        display: none; /* Initially hidden */
+    }
+
+    /* Style the title inside each item */
+    .content .title {
+        font-family: 'arial-black';
+        text-transform: uppercase;
+    }
+
+    /* Style the paragraph text inside each item */
+    .content .description {
+        line-height: 1.7;
+        margin: 1rem 0 1.5rem;
+        font-size: 0.8rem;
+    }
+
+    /* Style buttons inside each item */
+    .content button {
+        width: fit-content;
+        background-color: rgba(0,0,0,0.1);
+        color: white;
+        border: 2px solid white;
+        border-radius: 0.25rem;
+        padding: 0.75rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    }
+
+    /* Hover effect for buttons */
+    .content button:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        color: black;
+    }
+
+    /* Ensure the second item is fully visible when the page loads */
+    .item:nth-of-type(2) .content {
+        display: block;
+        animation: show 0.75s ease-in-out 0.3s forwards;
+    }
+
+    /* Animation effect for content appearing */
+    @keyframes show {
+        0% {
+            filter: blur(5px);
+            transform: translateY(calc(-50% + 75px));
+        }
+        100% {
+            opacity: 1;
+            filter: blur(0);
+        }
+    }
+
+    /* --- Navigation Buttons --- */
+    .nav {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        user-select: none; /* Prevents text selection */
+    }
+
+    /* Styling for navigation arrows */
+    .nav .btn {
+        background-color: rgba(255,255,255,0.5);
+        color: rgba(0,0,0,0.7);
+        border: 2px solid rgba(0,0,0,0.6);
+        margin: 0 0.25rem;
+        padding: 0.75rem;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    /* Hover effect for navigation buttons */
+    .nav .btn:hover {
+        background-color: rgba(255,255,255,0.3);
+    }
+
+    /* --- Responsive Design --- */
+
+    /* Adjust styles for tablets */
+    @media (max-width: 900px) {
+        .content {
+            width: 80%;
+            font-size: 14px;
+        }
+    }
+
+    /* Adjust styles for mobile screens */
+    @media (max-width: 600px) {
+        .item {
+            width: 100%;
+            height: auto;
+        }
+
+        .content {
+            font-size: 12px;
+        }
+    }
+
+    </style>
+
+<body>
+    <main>
+        <ul class='slider'>
+          <li class='item' style="background-image: url('./images/reminder.png')">
+            <div class='content'>
+              
+              <h2 class='title'>Friendly Reminder</h2>
+              <p class='description'> "Just a friendly reminder: The visual 
+                recognition system helps make your experience smoother and more 
+                secure. Rest assured, your privacy and data are always safe!"  </p>
+              <button>Safe</button>
+            </div>
+          </li>
+          
+          <li class='item' style="background-image: url('./images/pink.png')">
+            <div class='content'>
+              
+              <h2 class='title'>CS Elective 3</h2>
+              <p class='description'> This system uses AI to recognize pictures, 
+                based on the training assigned to it. By teaching the AI what 
+                different images look like, it gets better at identifying and 
+                understanding pictures on its own.  </p>
+              <button>AI</button> <button>Tafalla</button> <button>CS301</button>
+            </div>
+          </li>
+          <li class='item' style="background-image: url('./images/toy.png')">
+            <div class='content'>
+              <h2 class='title'>Toy</h2>
+              <p class='description'> This AI can recognize a Pyraminx, seal, 
+                unicorn, and rubber ducks! Grab some of your other favorite toys 
+                and give it a try!  </p>
+                <button onclick="location.href='toy.html'">Start</button>
+            </div>
+          </li>
+          <li class='item' style="background-image: url('./images/face.png')">
+            <div class='content'>
+              <h2 class='title'>Ethnicity</h2>
+              <p class='description'>
+                What do you look like? Are you White, Black, Asian, or 
+                something else? Try this and see for yourself!
+              </p>
+              <button onclick="location.href='ethnicity.html'">Start</button>
+            </div>
+          </li>
+          <li class='item' style="background-image: url('./images/pet.png')">
+            <div class='content'>
+              <h2 class='title'>Cat vs Dog</h2>
+              <p class='description'>
+                Do you have the sleek and mysterious charm of a cat or the bold 
+                and loyal spirit of a dog? Either way, you’ve got a personality 
+                that stands out!
+              </p>
+              <button onclick="location.href='pet.html'">Start</button>
+            </div>
+          </li>
+        </ul>
+        <nav class='nav'>
+          <ion-icon class='btn prev' name="arrow-back-outline"></ion-icon>
+          <ion-icon class='btn next' name="arrow-forward-outline"></ion-icon>
+        </nav>
+    </main>
+      
+      <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+      <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
+      <script>
+        const nextButton = document.querySelector('.next');
+        const prevButton = document.querySelector('.prev');
+        const slider = document.querySelector('.slider');
+    
+        function moveSlider(direction) {
+            const items = document.querySelectorAll('.item');
+            if (direction === 'next') {
+                slider.appendChild(items[0]);
+            } else if (direction === 'prev') {
+                slider.prepend(items[items.length - 1]);
+            }
+        }
+    
+        nextButton.addEventListener('click', () => moveSlider('next'));
+        prevButton.addEventListener('click', () => moveSlider('prev'));
+    </script>
+    
+</body>
+</html>
